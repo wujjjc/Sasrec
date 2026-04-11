@@ -229,8 +229,9 @@ def recommend(item_embbeding, output, user_id, train_item_seq, item_index_2_rawi
     scores = np.dot(item_embbeding, output) # (item_num,)
     # 获取用户看过序列的电影集合
     watch_movie_ids = {item_index_2_rawid.get(item) for item in train_item_seq if item != 0}
-    test_rawitems = {item_index_2_rawid.get(neg_item) for neg_item in neg_items}
-    test_rawitems.add(target_id)
+    # 测试阶段的 neg_items 已经是原始 movie_id，不要再做编码映射
+    test_rawitems = {int(neg_item) for neg_item in neg_items}
+    test_rawitems.add(int(target_id))
     # 获取未看过的电影的编码ID和对应的分数
     candidate_items = []
     for movie_id, score in enumerate(scores):

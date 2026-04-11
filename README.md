@@ -76,6 +76,36 @@ python main.py
 
 注意：`data.py` 中使用了相对路径 `./ml-1m/*.dat`，因此必须从 `sasrec` 目录启动，否则会找不到数据文件。
 
+### 命令行参数示例
+
+默认情况下，`main.py` 会进入评估模式。你也可以通过命令行修改常用参数：
+
+```bash
+# 默认评估
+python main.py
+
+# 修改序列长度、负采样数和 TopK
+python main.py --max-len 100 --neg-sample-num 5 --topk 20
+
+# 开启训练模式，并调整训练超参数
+python main.py --mode train --epoch 50 --lr 0.0005 --batch-size 64 --dropout 0.3
+```
+
+常用参数包括：
+
+- `--max-len`：序列最大长度
+- `--neg-sample-num`：训练负采样数量
+- `--batch-size`：批大小
+- `--embedding-size`：物品嵌入维度
+- `--dropout`：Dropout 比例
+- `--epoch`：训练轮数
+- `--lr`：学习率
+- `--eval-every`：每隔多少个 epoch 评估一次
+- `--topk`：评估 Top-K
+- `--mode`：`eval` 或 `train`
+- `--model-path`：模型保存/加载路径
+- `--log-file`：日志文件路径
+
 ## 训练与评估
 
 ### 当前 `main.py` 的行为
@@ -84,13 +114,19 @@ python main.py
 - 如果存在 `sasrec_model.pth`，会优先加载已有模型
 - 最后进行一次评估，并将结果写入 `sasrec_eval.log`
 
-### 如果开启训练
+### 训练模式
 
-`main.py` 中的训练循环目前是注释状态。你可以取消注释训练部分后：
+如果想训练模型，直接使用：
 
-- 使用 `BCEWithLogitsLoss` 风格的二分类目标
+```bash
+python main.py --mode train
+```
+
+训练时会：
+
+- 使用 `BCEWithLogitsLoss` 进行二分类训练
 - 每隔若干 epoch 做一次验证
-- 保存模型到 `sasrec_model.pth`
+- 自动保存模型到 `sasrec_model.pth`
 
 ## 评估指标
 
